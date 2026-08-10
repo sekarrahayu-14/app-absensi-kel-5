@@ -1,7 +1,7 @@
 <?php
 class Database {
     private $host = "localhost";
-    private $db_name = "db_pplg";
+    private $db_name = "db_absensi";
     private $username = "root";
     private $password = "rpl12345";
     public $conn;
