@@ -1,2 +1,2 @@
 Tugas :
-db.php => Jaki => management database, tabel
+db.php => Jaki => #Database Sudah Selesai
