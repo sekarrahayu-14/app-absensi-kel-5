@@ -49,774 +49,454 @@ function inisial(string $nama): string
     return $hasil;
 }
 ?>
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buku Absensi Siswa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@500;700;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root{
+    --ink:#1E2A3A;
+    --ink-soft:#33465C;
+    --paper:#F1EBD9;
+    --paper-deep:#E7DFC7;
+    --card:#FBF8EF;
+    --rule:#D9CFAF;
+    --margin-red:#AD4038;
+    --stamp-green:#2F5233;
+    --stamp-gold:#A6772E;
+    --stamp-blue:#33587A;
+    --stamp-red:#AD4038;
+  }
+  *{ font-family:'Inter',sans-serif; }
+  body{
+    background-color:var(--paper);
+    background-image:
+      repeating-linear-gradient(180deg, transparent, transparent 34px, rgba(30,42,58,0.05) 35px);
+  }
+  .font-display{ font-family:'Roboto Slab',serif; }
+  .font-mono{ font-family:'JetBrains Mono',monospace; }
 
-    <title>Absensi Siswa</title>
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    font-size:11px;
+  }
 
-    <link
-        href="[cdn.jsdelivr.net](https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css)"
-        rel="stylesheet"
-    >
+  .date-stamp{
+    border:2px solid var(--ink);
+    border-radius:6px;
+    transform:rotate(2deg);
+    color:var(--ink);
+    font-family:'JetBrains Mono',monospace;
+    letter-spacing:.08em;
+  }
 
-    <link
-        href="[cdn.jsdelivr.net](https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css)"
-        rel="stylesheet"
-    >
+  .tally-card{
+    background:var(--card);
+    border:1px solid var(--rule);
+    box-shadow:3px 3px 0 rgba(30,42,58,0.06);
+    position:relative;
+  }
+  .tally-card::before{
+    content:"";
+    position:absolute; left:0; top:12px; bottom:12px; width:3px;
+    background:var(--tally-color,var(--ink));
+    border-radius:2px;
+  }
 
-    <style>
-        :root {
-            --primary-color: #4f46e5;
-            --primary-dark: #3730a3;
-            --sidebar-width: 260px;
-            --body-bg: #f4f7fb;
-        }
+  .stamp{
+    display:inline-flex;
+    align-items:center;
+    gap:.35em;
+    font-family:'JetBrains Mono',monospace;
+    text-transform:uppercase;
+    letter-spacing:.06em;
+    font-size:11px;
+    font-weight:700;
+    padding:3px 10px 3px 8px;
+    border:1.5px solid currentColor;
+    border-radius:3px;
+    transform:rotate(-1.5deg);
+    background:color-mix(in srgb, currentColor 8%, transparent);
+  }
+  .stamp::before{
+    content:"";
+    width:5px; height:5px; border-radius:50%;
+    background:currentColor;
+  }
+  .stamp-hadir{ color:var(--stamp-green); }
+  .stamp-izin{ color:var(--stamp-gold); }
+  .stamp-sakit{ color:var(--stamp-blue); }
+  .stamp-alpa{ color:var(--stamp-red); }
 
-        body {
-            min-height: 100vh;
-            background: var(--body-bg);
-            color: #1f2937;
-        }
+  .ledger{
+    background:var(--card);
+    border:1px solid var(--rule);
+    position:relative;
+    padding-left:34px;
+  }
+  .ledger::before{
+    content:"";
+    position:absolute; left:26px; top:0; bottom:0; width:2px;
+    background:var(--margin-red);
+    opacity:.55;
+  }
+  .ledger table{ border-collapse:collapse; }
+  .ledger thead th{
+    font-family:'Roboto Slab',serif;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.06em;
+    font-size:12px;
+    color:var(--paper);
+    background:var(--ink);
+  }
+  .ledger tbody tr{ border-bottom:1px dashed var(--rule); }
+  .ledger tbody tr:hover{ background:rgba(173,64,56,0.05); }
+  .ledger td, .ledger th{ padding:12px 16px; }
 
-        .sidebar {
-            position: fixed;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            z-index: 1030;
-            width: var(--sidebar-width);
-            padding: 24px 16px;
-            overflow-y: auto;
-            color: white;
-            background: linear-gradient(
-                160deg,
-                var(--primary-color),
-                var(--primary-dark)
-            );
-        }
+  .btn-stamp{
+    font-family:'Roboto Slab',serif;
+    font-weight:700;
+    letter-spacing:.02em;
+    background:var(--ink);
+    color:var(--paper);
+    border:1.5px solid var(--ink);
+    transition:transform .12s ease, background .12s ease;
+  }
+  .btn-stamp:hover{ background:var(--ink-soft); transform:translateY(-1px); }
 
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 32px;
-            padding: 0 12px;
-        }
+  .tab-pill{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+  }
+  .tab-pill.active{
+    background:var(--ink);
+    color:var(--paper);
+  }
 
-        .brand-icon {
-            display: grid;
-            place-items: center;
-            width: 44px;
-            height: 44px;
-            border-radius: 14px;
-            font-size: 22px;
-            background: rgba(255, 255, 255, 0.18);
-        }
+  .card-modal{
+    background:var(--card);
+    border:1px solid var(--rule);
+    position:relative;
+    padding-left:30px;
+  }
+  .card-modal::before{
+    content:"";
+    position:absolute; left:22px; top:0; bottom:0; width:2px;
+    background:var(--margin-red);
+    opacity:.55;
+  }
 
-        .sidebar .nav-link {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 8px;
-            padding: 12px 14px;
-            border-radius: 12px;
-            color: rgba(255, 255, 255, 0.8);
-            transition: 0.2s ease;
-        }
+  .field-input{
+    background:var(--paper);
+    border:1px solid var(--rule);
+  }
+  .field-input:focus{
+    outline:none;
+    border-color:var(--ink);
+    box-shadow:0 0 0 3px rgba(30,42,58,0.1);
+  }
 
-        .sidebar .nav-link:hover,
-        .sidebar .nav-link.active {
-            color: white;
-            background: rgba(255, 255, 255, 0.16);
-        }
+  .link-hapus{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    letter-spacing:.03em;
+    text-decoration:underline;
+    text-decoration-style:dotted;
+    text-underline-offset:3px;
+  }
 
-        .main-content {
-            min-height: 100vh;
-            margin-left: var(--sidebar-width);
-            padding: 28px;
-        }
+  .class-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:.04em;
+    background:var(--paper-deep);
+    color:var(--ink-soft);
+    padding:2px 8px;
+    border-radius:3px;
+  }
 
-        .mobile-header {
-            display: none;
-        }
-
-        .page-title {
-            font-size: 1.65rem;
-            font-weight: 700;
-        }
-
-        .card {
-            border: 0;
-            border-radius: 18px;
-            box-shadow: 0 8px 25px rgba(15, 23, 42, 0.06);
-        }
-
-        .summary-card {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .summary-icon {
-            display: grid;
-            place-items: center;
-            width: 50px;
-            height: 50px;
-            border-radius: 15px;
-            font-size: 22px;
-        }
-
-        .bg-soft-primary {
-            color: #4338ca;
-            background: #e0e7ff;
-        }
-
-        .bg-soft-success {
-            color: #15803d;
-            background: #dcfce7;
-        }
-
-        .bg-soft-warning {
-            color: #a16207;
-            background: #fef3c7;
-        }
-
-        .bg-soft-danger {
-            color: #b91c1c;
-            background: #fee2e2;
-        }
-
-        .student-avatar {
-            display: grid;
-            flex-shrink: 0;
-            place-items: center;
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            color: var(--primary-color);
-            font-weight: 700;
-            background: #e0e7ff;
-        }
-
-        .status-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-
-        .status-group .btn {
-            min-width: 74px;
-            border-radius: 10px;
-        }
-
-        .table > :not(caption) > * > * {
-            padding: 14px 12px;
-            vertical-align: middle;
-        }
-
-        .table thead th {
-            white-space: nowrap;
-            color: #64748b;
-            font-size: 0.82rem;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-            background: #f8fafc;
-        }
-
-        .search-box {
-            position: relative;
-        }
-
-        .search-box i {
-            position: absolute;
-            top: 50%;
-            left: 14px;
-            color: #94a3b8;
-            transform: translateY(-50%);
-        }
-
-        .search-box input {
-            padding-left: 40px;
-        }
-
-        .btn-primary {
-            border-color: var(--primary-color);
-            background: var(--primary-color);
-        }
-
-        .btn-primary:hover,
-        .btn-primary:focus {
-            border-color: var(--primary-dark);
-            background: var(--primary-dark);
-        }
-
-        @media (max-width: 991.98px) {
-            .sidebar {
-                transform: translateX(-100%);
-                transition: transform 0.25s ease;
-            }
-
-            .sidebar.show {
-                transform: translateX(0);
-            }
-
-            .sidebar-overlay {
-                position: fixed;
-                inset: 0;
-                z-index: 1020;
-                display: none;
-                background: rgba(15, 23, 42, 0.55);
-            }
-
-            .sidebar-overlay.show {
-                display: block;
-            }
-
-            .main-content {
-                margin-left: 0;
-                padding: 20px 16px;
-            }
-
-            .mobile-header {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                margin-bottom: 22px;
-            }
-        }
-
-        @media (max-width: 767.98px) {
-            .page-title {
-                font-size: 1.35rem;
-            }
-
-            .attendance-table thead {
-                display: none;
-            }
-
-            .attendance-table,
-            .attendance-table tbody,
-            .attendance-table tr,
-            .attendance-table td {
-                display: block;
-                width: 100%;
-            }
-
-            .attendance-table tbody {
-                display: grid;
-                gap: 14px;
-            }
-
-            .attendance-table tr {
-                padding: 16px;
-                border: 1px solid #e5e7eb;
-                border-radius: 16px;
-                background: white;
-            }
-
-            .attendance-table td {
-                padding: 5px 0;
-                border: 0;
-            }
-
-            .attendance-table td:first-child {
-                display: none;
-            }
-
-            .status-group {
-                display: grid;
-                grid-template-columns: repeat(2, 1fr);
-                margin-top: 10px;
-            }
-
-            .status-group .btn {
-                width: 100%;
-            }
-        }
-    </style>
+  @media (prefers-reduced-motion: reduce){
+    .btn-stamp{ transition:none; }
+  }
+</style>
 </head>
+<body class="min-h-screen text-[var(--ink)]">
 
-<body>
-    <aside class="sidebar" id="sidebar">
-        <div class="brand">
-            <div class="brand-icon">
-                <i class="bi bi-mortarboard-fill"></i>
-            </div>
+  <!-- Header band -->
+  <header style="background:var(--ink)" class="px-6 py-5">
+    <div class="max-w-6xl mx-auto flex items-center justify-between flex-wrap gap-4">
+      <div class="flex items-center gap-3">
+        <span class="text-2xl">📖</span>
+        <h1 class="font-display text-xl text-[var(--paper)] tracking-wide">Buku Absensi Siswa</h1>
+      </div>
+      <nav class="flex gap-1 bg-white/10 rounded-full p-1">
+        <a href="dashboard.php" class="tab-pill active px-4 py-2 rounded-full transition">Absensi Siswa</a>
+        <a href="kehadiran_guru.php" class="tab-pill px-4 py-2 rounded-full text-[var(--paper)]/70 hover:text-[var(--paper)] transition">Kehadiran Guru</a>
+      </nav>
+    </div>
+  </header>
 
-            <div>
-                <div class="fw-bold fs-5">EduHadir</div>
-                <small class="text-white-50">Sistem Absensi</small>
-            </div>
+  <main class="max-w-6xl mx-auto px-4 py-10">
+
+    <!-- Eyebrow + date stamp + class filter -->
+    <div class="flex items-end justify-between flex-wrap gap-4 mb-8">
+      <div>
+        <p class="eyebrow text-[var(--margin-red)] mb-2">Register Harian &middot; Ruang Kelas</p>
+        <h2 class="font-display text-3xl md:text-4xl">Absensi hari ini</h2>
+      </div>
+      <div class="flex items-center gap-3">
+        <select id="filter-kelas" class="field-input rounded-md px-3 py-2 text-sm font-mono">
+          <option value="">Semua Kelas</option>
+        </select>
+        <div class="date-stamp px-4 py-2 text-sm" id="date-stamp">—</div>
+      </div>
+    </div>
+
+    <!-- Tally cards -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+      <div class="tally-card rounded-lg p-5 pl-6" style="--tally-color:var(--stamp-green)">
+        <p class="eyebrow text-[var(--ink-soft)]">Hadir</p>
+        <p class="font-mono font-bold text-4xl mt-2" style="color:var(--stamp-green)" id="count-hadir">–</p>
+      </div>
+      <div class="tally-card rounded-lg p-5 pl-6" style="--tally-color:var(--stamp-gold)">
+        <p class="eyebrow text-[var(--ink-soft)]">Izin</p>
+        <p class="font-mono font-bold text-4xl mt-2" style="color:var(--stamp-gold)" id="count-izin">–</p>
+      </div>
+      <div class="tally-card rounded-lg p-5 pl-6" style="--tally-color:var(--stamp-blue)">
+        <p class="eyebrow text-[var(--ink-soft)]">Sakit</p>
+        <p class="font-mono font-bold text-4xl mt-2" style="color:var(--stamp-blue)" id="count-sakit">–</p>
+      </div>
+      <div class="tally-card rounded-lg p-5 pl-6" style="--tally-color:var(--stamp-red)">
+        <p class="eyebrow text-[var(--ink-soft)]">Alpa</p>
+        <p class="font-mono font-bold text-4xl mt-2" style="color:var(--stamp-red)" id="count-alpa">–</p>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
+      <h3 class="font-display text-lg">Daftar Absensi Siswa</h3>
+      <button id="btn-open-modal" class="btn-stamp text-sm px-5 py-2.5 rounded-md">
+        + Catat Absensi
+      </button>
+    </div>
+
+    <!-- Ledger table -->
+    <div class="ledger rounded-lg overflow-hidden">
+      <table class="w-full text-sm text-left">
+        <thead>
+          <tr>
+            <th>Tanggal</th>
+            <th>Nama Siswa</th>
+            <th>Kelas</th>
+            <th>Status</th>
+            <th>Keterangan</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="table-body">
+          <tr><td colspan="6" class="text-center py-8 italic text-[var(--ink-soft)]/70">Memuat catatan…</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+
+  <!-- Modal -->
+  <div id="modal" class="fixed inset-0 bg-[var(--ink)]/50 hidden items-center justify-center px-4 z-10">
+    <div class="card-modal rounded-lg shadow-xl w-full max-w-md p-6">
+      <p class="eyebrow text-[var(--margin-red)] mb-1">Entri Baru</p>
+      <h3 class="font-display text-xl mb-5">Catat Absensi Siswa</h3>
+      <form id="form-absensi" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wide text-[var(--ink-soft)] mb-1">Nama Siswa</label>
+          <input type="text" name="nama_siswa" required
+            class="field-input w-full rounded-md px-3 py-2 text-sm">
         </div>
-
-        <nav class="nav flex-column">
-            <a href="#" class="nav-link">
-                <i class="bi bi-grid-1x2-fill"></i>
-                Dashboard
-            </a>
-
-            <a href="#" class="nav-link active">
-                <i class="bi bi-calendar2-check-fill"></i>
-                Absensi Siswa
-            </a>
-
-            <a href="#" class="nav-link">
-                <i class="bi bi-people-fill"></i>
-                Data Siswa
-            </a>
-
-            <a href="#" class="nav-link">
-                <i class="bi bi-journal-text"></i>
-                Rekap Absensi
-            </a>
-
-            <a href="#" class="nav-link">
-                <i class="bi bi-gear-fill"></i>
-                Pengaturan
-            </a>
-        </nav>
-
-        <div class="position-absolute bottom-0 start-0 w-100 p-3">
-            <div class="rounded-4 p-3 bg-white bg-opacity-10">
-                <small class="d-block text-white-50">Masuk sebagai</small>
-                <strong>Administrator</strong>
-            </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-wide text-[var(--ink-soft)] mb-1">Kelas</label>
+            <input type="text" name="kelas" required placeholder="cth. 7A"
+              class="field-input w-full rounded-md px-3 py-2 text-sm font-mono">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-wide text-[var(--ink-soft)] mb-1">Status</label>
+            <select name="status" required
+              class="field-input w-full rounded-md px-3 py-2 text-sm">
+              <option value="Hadir">Hadir</option>
+              <option value="Izin">Izin</option>
+              <option value="Sakit">Sakit</option>
+              <option value="Alpa">Alpa</option>
+            </select>
+          </div>
         </div>
-    </aside>
-
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-    <main class="main-content">
-        <div class="mobile-header">
-            <button
-                type="button"
-                class="btn btn-light shadow-sm"
-                id="menuButton"
-                aria-label="Buka menu"
-            >
-                <i class="bi bi-list fs-4"></i>
-            </button>
-
-            <span class="fw-bold text-primary">EduHadir</span>
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wide text-[var(--ink-soft)] mb-1">Keterangan</label>
+          <textarea name="keterangan" rows="2"
+            class="field-input w-full rounded-md px-3 py-2 text-sm"></textarea>
         </div>
-
-        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
-            <div>
-                <h1 class="page-title mb-1">Absensi Siswa</h1>
-                <p class="text-secondary mb-0">
-                    Kelola kehadiran siswa dengan mudah.
-                </p>
-            </div>
-
-            <div class="d-flex align-items-center gap-2">
-                <div class="text-end d-none d-sm-block">
-                    <div class="fw-semibold">Admin Sekolah</div>
-                    <small class="text-secondary">
-                        <?= escape(date('d M Y')); ?>
-                    </small>
-                </div>
-
-                <div class="student-avatar">
-                    <i class="bi bi-person-fill"></i>
-                </div>
-            </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" id="btn-close-modal" class="px-4 py-2 text-sm text-[var(--ink-soft)] hover:text-[var(--ink)]">Batal</button>
+          <button type="submit" class="btn-stamp px-4 py-2 text-sm rounded-md">Simpan</button>
         </div>
+      </form>
+    </div>
+  </div>
 
-        <?php if ($pesan !== ''): ?>
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="bi bi-check-circle-fill me-2"></i>
-                <?= escape($pesan); ?>
+<script>
+const API = 'JsonViews.php';
+const modal = document.getElementById('modal');
+let allRows = [];
 
-                <button
-                    type="button"
-                    class="btn-close"
-                    data-bs-dismiss="alert"
-                    aria-label="Tutup"
-                ></button>
-            </div>
-        <?php endif; ?>
+const today = new Date();
+document.getElementById('date-stamp').textContent = today.toLocaleDateString('id-ID', {
+  weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+}).toUpperCase();
 
-        <section class="row g-3 mb-4">
-            <div class="col-6 col-xl-3">
-                <div class="card summary-card h-100">
-                    <div class="card-body d-flex align-items-center gap-3">
-                        <div class="summary-icon bg-soft-primary">
-                            <i class="bi bi-people-fill"></i>
-                        </div>
+document.getElementById('btn-open-modal').addEventListener('click', () => {
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+});
+document.getElementById('btn-close-modal').addEventListener('click', closeModal);
+function closeModal() {
+  modal.classList.add('hidden');
+  modal.classList.remove('flex');
+  document.getElementById('form-absensi').reset();
+}
 
-                        <div>
-                            <small class="text-secondary">Total Siswa</small>
-                            <h3 class="mb-0" id="totalCount">
-                                <?= count($daftarSiswa); ?>
-                            </h3>
-                        </div>
-                    </div>
-                </div>
-            </div>
+function badgeStatus(status) {
+  const map = {
+    'Hadir': 'stamp-hadir',
+    'Izin': 'stamp-izin',
+    'Sakit': 'stamp-sakit',
+    'Alpa': 'stamp-alpa',
+  };
+  const cls = map[status] || 'stamp-hadir';
+  return `<span class="stamp ${cls}">${status}</span>`;
+}
 
-            <div class="col-6 col-xl-3">
-                <div class="card summary-card h-100">
-                    <div class="card-body d-flex align-items-center gap-3">
-                        <div class="summary-icon bg-soft-success">
-                            <i class="bi bi-check-circle-fill"></i>
-                        </div>
+async function loadSummary(kelas = '') {
+  const q = kelas ? `&kelas=${encodeURIComponent(kelas)}` : '';
+  const res = await fetch(`${API}?action=summary&jenis=siswa${q}`);
+  const json = await res.json();
+  if (json.status === 'success') {
+    document.getElementById('count-hadir').textContent = json.data.Hadir ?? 0;
+    document.getElementById('count-izin').textContent = json.data.Izin ?? 0;
+    document.getElementById('count-sakit').textContent = json.data.Sakit ?? 0;
+    document.getElementById('count-alpa').textContent = json.data.Alpa ?? 0;
+  }
+}
 
-                        <div>
-                            <small class="text-secondary">Hadir</small>
-                            <h3 class="mb-0" id="hadirCount">0</h3>
-                        </div>
-                    </div>
-                </div>
-            </div>
+function renderRows(rows) {
+  const tbody = document.getElementById('table-body');
+  if (rows.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 italic text-[var(--ink-soft)]/70">— belum ada catatan hari ini —</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = rows.map(row => `
+    <tr>
+      <td class="font-mono text-[13px]">${row.tanggal ?? '-'}</td>
+      <td class="font-medium">${row.nama_siswa ?? '-'}</td>
+      <td><span class="class-chip">${row.kelas ?? '-'}</span></td>
+      <td>${badgeStatus(row.status)}</td>
+      <td class="text-[var(--ink-soft)]">${row.keterangan ?? '-'}</td>
+      <td>
+        <button onclick="hapusData(${row.id_absensi})" class="link-hapus" style="color:var(--margin-red)">Hapus</button>
+      </td>
+    </tr>
+  `).join('');
+}
 
-            <div class="col-6 col-xl-3">
-                <div class="card summary-card h-100">
-                    <div class="card-body d-flex align-items-center gap-3">
-                        <div class="summary-icon bg-soft-warning">
-                            <i class="bi bi-info-circle-fill"></i>
-                        </div>
+function populateKelasFilter(rows) {
+  const select = document.getElementById('filter-kelas');
+  const current = select.value;
+  const kelasList = [...new Set(rows.map(r => r.kelas).filter(Boolean))].sort();
+  select.innerHTML = `<option value="">Semua Kelas</option>` +
+    kelasList.map(k => `<option value="${k}">${k}</option>`).join('');
+  select.value = current;
+}
 
-                        <div>
-                            <small class="text-secondary">Izin/Sakit</small>
-                            <h3 class="mb-0" id="izinSakitCount">0</h3>
-                        </div>
-                    </div>
-                </div>
-            </div>
+async function loadTable() {
+  const tbody = document.getElementById('table-body');
+  tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 italic text-[var(--ink-soft)]/70">Memuat catatan…</td></tr>`;
 
-            <div class="col-6 col-xl-3">
-                <div class="card summary-card h-100">
-                    <div class="card-body d-flex align-items-center gap-3">
-                        <div class="summary-icon bg-soft-danger">
-                            <i class="bi bi-x-circle-fill"></i>
-                        </div>
+  const tanggal = today.toISOString().slice(0, 10);
+  const res = await fetch(`${API}?action=list&jenis=siswa&tanggal=${tanggal}`);
+  const json = await res.json();
 
-                        <div>
-                            <small class="text-secondary">Alpa</small>
-                            <h3 class="mb-0" id="alpaCount">0</h3>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+  if (json.status !== 'success') {
+    renderRows([]);
+    return;
+  }
 
-        <div class="card mb-4">
-            <div class="card-body">
-                <form method="get" class="row g-3 align-items-end">
-                    <div class="col-12 col-md-5">
-                        <label for="kelas" class="form-label fw-semibold">
-                            Kelas
-                        </label>
+  allRows = json.data || [];
+  populateKelasFilter(allRows);
+  applyFilter();
+}
 
-                        <select class="form-select" id="kelas" name="kelas">
-                            <?php
-                            $daftarKelas = [
-                                'X RPL 1',
-                                'XI RPL 1',
-                                'XII RPL 1',
-                                'XII RPL 2'
-                            ];
-                            ?>
+function applyFilter() {
+  const kelas = document.getElementById('filter-kelas').value;
+  const filtered = kelas ? allRows.filter(r => r.kelas === kelas) : allRows;
+  renderRows(filtered);
+}
 
-                            <?php foreach ($daftarKelas as $itemKelas): ?>
-                                <option
-                                    value="<?= escape($itemKelas); ?>"
-                                    <?= $kelas === $itemKelas ? 'selected' : ''; ?>
-                                >
-                                    <?= escape($itemKelas); ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
+document.getElementById('filter-kelas').addEventListener('change', () => {
+  applyFilter();
+  loadSummary(document.getElementById('filter-kelas').value);
+});
 
-                    <div class="col-12 col-md-4">
-                        <label for="tanggal" class="form-label fw-semibold">
-                            Tanggal
-                        </label>
+async function hapusData(id) {
+  if (!confirm('Hapus data absensi ini?')) return;
+  const res = await fetch(`${API}?action=hapus&id=${id}`);
+  const json = await res.json();
+  if (json.status === 'success') {
+    loadSummary(document.getElementById('filter-kelas').value);
+    loadTable();
+  } else {
+    alert('Gagal menghapus data');
+  }
+}
 
-                        <input
-                            type="date"
-                            class="form-control"
-                            id="tanggal"
-                            name="tanggal"
-                            value="<?= escape($tanggal); ?>"
-                        >
-                    </div>
+document.getElementById('form-absensi').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const payload = {
+    jenis: 'siswa',
+    nama_siswa: form.nama_siswa.value,
+    kelas: form.kelas.value,
+    status: form.status.value,
+    keterangan: form.keterangan.value || null,
+    tanggal: today.toISOString().slice(0, 10),
+  };
 
-                    <div class="col-12 col-md-3">
-                        <button type="submit" class="btn btn-primary w-100">
-                            <i class="bi bi-search me-2"></i>
-                            Tampilkan
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
+  const res = await fetch(`${API}?action=tambah`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  const json = await res.json();
 
-        <form method="post" id="attendanceForm">
-            <input
-                type="hidden"
-                name="kelas"
-                value="<?= escape($kelas); ?>"
-            >
+  if (json.status === 'success') {
+    closeModal();
+    loadSummary(document.getElementById('filter-kelas').value);
+    loadTable();
+  } else {
+    alert('Gagal menyimpan data: ' + (json.message || ''));
+  }
+});
 
-            <input
-                type="hidden"
-                name="tanggal"
-                value="<?= escape($tanggal); ?>"
-            >
+loadSummary();
+loadTable();
+</script>
 
-            <div class="card">
-                <div class="card-header border-0 bg-white p-3 p-md-4">
-                    <div class="row g-3 align-items-center">
-                        <div class="col-12 col-lg-5">
-                            <h2 class="h5 fw-bold mb-1">
-                                Daftar Kehadiran
-                            </h2>
-
-                            <small class="text-secondary">
-                                <?= escape($kelas); ?>
-                                -
-                                <?= escape(date('d-m-Y', strtotime($tanggal))); ?>
-                            </small>
-                        </div>
-
-                        <div class="col-12 col-sm-7 col-lg-4">
-                            <div class="search-box">
-                                <i class="bi bi-search"></i>
-
-                                <input
-                                    type="search"
-                                    class="form-control"
-                                    id="studentSearch"
-                                    placeholder="Cari nama atau NIS..."
-                                >
-                            </div>
-                        </div>
-
-                        <div class="col-12 col-sm-5 col-lg-3">
-                            <button
-                                type="button"
-                                class="btn btn-outline-success w-100"
-                                id="markAllPresent"
-                            >
-                                <i class="bi bi-check2-all me-2"></i>
-                                Semua Hadir
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card-body p-3 p-md-4 pt-0">
-                    <div class="table-responsive">
-                        <table class="table attendance-table align-middle mb-0">
-                            <thead>
-                                <tr>
-                                    <th style="width: 70px;">No.</th>
-                                    <th>Data Siswa</th>
-                                    <th>NIS</th>
-                                    <th style="min-width: 350px;">Status Kehadiran</th>
-                                </tr>
-                            </thead>
-
-                            <tbody id="studentTableBody">
-                                <?php foreach ($daftarSiswa as $index => $siswa): ?>
-                                    <tr
-                                        class="student-row"
-                                        data-search="<?= escape(
-                                            strtolower(
-                                                $siswa['nama'] . ' ' . $siswa['nis']
-                                            )
-                                        ); ?>"
-                                    >
-                                        <td><?= $index + 1; ?></td>
-
-                                        <td>
-                                            <div class="d-flex align-items-center gap-3">
-                                                <div class="student-avatar">
-                                                    <?= escape(inisial($siswa['nama'])); ?>
-                                                </div>
-
-                                                <div>
-                                                    <div class="fw-semibold">
-                                                        <?= escape($siswa['nama']); ?>
-                                                    </div>
-
-                                                    <small class="text-secondary">
-                                                        <?= escape($siswa['kelas']); ?>
-                                                    </small>
-                                                </div>
-                                            </div>
-                                        </td>
-
-                                        <td>
-                                            <span class="badge text-bg-light border px-3 py-2">
-                                                <?= escape($siswa['nis']); ?>
-                                            </span>
-                                        </td>
-
-                                        <td>
-                                            <div
-                                                class="status-group"
-                                                role="group"
-                                                aria-label="Status <?= escape($siswa['nama']); ?>"
-                                            >
-                                                <?php
-                                                $statusList = [
-                                                    'Hadir' => 'success',
-                                                    'Izin'  => 'primary',
-                                                    'Sakit' => 'warning',
-                                                    'Alpa'  => 'danger',
-                                                ];
-                                                ?>
-
-                                                <?php foreach ($statusList as $status => $warna): ?>
-                                                    <?php
-                                                    $idStatus = $siswa['nis'] . '-' . strtolower($status);
-                                                    ?>
-
-                                                    <input
-                                                        type="radio"
-                                                        class="btn-check attendance-radio"
-                                                        name="status[<?= escape($siswa['nis']); ?>]"
-                                                        id="<?= escape($idStatus); ?>"
-                                                        value="<?= escape($status); ?>"
-                                                        autocomplete="off"
-                                                        <?= $status === 'Hadir' ? 'checked' : ''; ?>
-                                                    >
-
-                                                    <label
-                                                        class="btn btn-outline-<?= escape($warna); ?> btn-sm"
-                                                        for="<?= escape($idStatus); ?>"
-                                                    >
-                                                        <?= escape($status); ?>
-                                                    </label>
-                                                <?php endforeach; ?>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div
-                        class="text-center text-secondary py-5 d-none"
-                        id="emptyState"
-                    >
-                        <i class="bi bi-search fs-1 d-block mb-2"></i>
-                        Siswa tidak ditemukan.
-                    </div>
-                </div>
-
-                <div class="card-footer border-0 bg-white p-3 p-md-4">
-                    <div
-                        class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3"
-                    >
-                        <small class="text-secondary">
-                            Pastikan seluruh status siswa sudah benar.
-                        </small>
-
-                        <button type="submit" class="btn btn-primary px-4">
-                            <i class="bi bi-floppy-fill me-2"></i>
-                            Simpan Absensi
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </form>
-    </main>
-
-    <script
-        src="[cdn.jsdelivr.net](https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js)"
-    ></script>
-
-    <script>
-        const sidebar = document.getElementById('sidebar');
-        const sidebarOverlay = document.getElementById('sidebarOverlay');
-        const menuButton = document.getElementById('menuButton');
-        const searchInput = document.getElementById('studentSearch');
-        const emptyState = document.getElementById('emptyState');
-        const markAllButton = document.getElementById('markAllPresent');
-
-        function toggleSidebar() {
-            sidebar.classList.toggle('show');
-            sidebarOverlay.classList.toggle('show');
-        }
-
-        menuButton.addEventListener('click', toggleSidebar);
-        sidebarOverlay.addEventListener('click', toggleSidebar);
-
-        function updateSummary() {
-            const selectedStatuses = document.querySelectorAll(
-                '.attendance-radio:checked'
-            );
-
-            let hadir = 0;
-            let izinSakit = 0;
-            let alpa = 0;
-
-            selectedStatuses.forEach((radio) => {
-                if (radio.value === 'Hadir') {
-                    hadir++;
-                }
-
-                if (radio.value === 'Izin' || radio.value === 'Sakit') {
-                    izinSakit++;
-                }
-
-                if (radio.value === 'Alpa') {
-                    alpa++;
-                }
-            });
-
-            document.getElementById('hadirCount').textContent = hadir;
-            document.getElementById('izinSakitCount').textContent = izinSakit;
-            document.getElementById('alpaCount').textContent = alpa;
-        }
-
-        document.querySelectorAll('.attendance-radio').forEach((radio) => {
-            radio.addEventListener('change', updateSummary);
-        });
-
-        markAllButton.addEventListener('click', () => {
-            document.querySelectorAll('.student-row').forEach((row) => {
-                if (row.style.display !== 'none') {
-                    const hadirRadio = row.querySelector(
-                        '.attendance-radio[value="Hadir"]'
-                    );
-
-                    if (hadirRadio) {
-                        hadirRadio.checked = true;
-                    }
-                }
-            });
-
-            updateSummary();
-        });
-
-        searchInput.addEventListener('input', function () {
-            const keyword = this.value.toLowerCase().trim();
-            const rows = document.querySelectorAll('.student-row');
-            let visibleRows = 0;
-
-            rows.forEach((row) => {
-                const content = row.dataset.search;
-                const isVisible = content.includes(keyword);
-
-                row.style.display = isVisible ? '' : 'none';
-
-                if (isVisible) {
-                    visibleRows++;
-                }
-            });
-
-            emptyState.classList.toggle('d-none', visibleRows !== 0);
-        });
-
-        updateSummary();
-    </script>
 </body>
 </html>

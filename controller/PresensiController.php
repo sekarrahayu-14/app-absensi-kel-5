@@ -1,50 +1,50 @@
 <?php
-/**
- * PresensiController.php
- * Menangani logika antara Model Presensi dan tampilan (views/JSON)
- */
+require_once __DIR__ . '/../config/Database.php';
 require_once __DIR__ . '/../models/Presensi.php';
 
 class PresensiController {
+    private $db;
     private $presensi;
 
     public function __construct() {
-        $this->presensi = new Presensi();
+        $database = new Database();
+        $this->db = $database->getConnection();
+        $this->presensi = new Presensi($this->db);
     }
 
-    public function listKehadiran($jenis = null, $tanggal = null): array {
-        return $this->presensi->getAll($jenis, $tanggal);
-    }
+    public function getJsonData() {
+        header('Content-Type: application/json');
+        $stmt = $this->presensi->readAllWithSiswa();
+        $data = [];
 
-    public function summary(string $jenis): array {
-        return $this->presensi->getSummaryToday($jenis);
-    }
-
-    public function totalSiswa(): int {
-        return $this->presensi->countTotalSiswa();
-    }
-
-    public function tambah(array $data): bool {
-        if (empty($data['jenis']) || empty($data['status'])) {
-            throw new InvalidArgumentException('Data jenis dan status wajib diisi');
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $data[] = [
+                'nis' => $row['nis'],
+                'nama_siswa' => $row['nama_siswa'],
+                'kelas' => $row['kelas'],
+                'jurusan' => $row['jurusan'],
+                'tanggal' => $row['tanggal'] ?? date('Y-m-d'),
+                'status_kehadiran' => $row['status_kehadiran'] ?? 'Hadir',
+                'keterangan' => $row['keterangan'] ?? '-'
+            ];
         }
-        if ($data['jenis'] === 'guru' && empty($data['nama_guru'])) {
-            throw new InvalidArgumentException('Nama guru wajib diisi');
-        }
-        if ($data['jenis'] === 'siswa' && empty($data['id_siswa'])) {
-            throw new InvalidArgumentException('id_siswa wajib diisi');
-        }
-        return $this->presensi->create($data);
+        echo json_encode(['status' => 'success', 'data' => $data]);
     }
 
-    public function ubah(int $id, array $data): bool {
-        if (empty($data['status'])) {
-            throw new InvalidArgumentException('Status wajib diisi');
-        }
-        return $this->presensi->update($id, $data);
-    }
+    public function submitAbsensi() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $nis_list = $_POST['nis'] ?? [];
+            $status_list = $_POST['status_kehadiran'] ?? [];
+            $keterangan_list = $_POST['keterangan'] ?? [];
+            $tanggal = $_POST['tanggal'] ?? date('Y-m-d');
 
-    public function hapus(int $id): bool {
-        return $this->presensi->delete($id);
+            foreach ($nis_list as $index => $nis) {
+                $status = $status_list[$index] ?? 'Hadir';
+                $keterangan = $keterangan_list[$index] ?? '-';
+                $this->presensi->simpanAbsensi($nis, $tanggal, $status, $keterangan);
+            }
+            header("Location: ../views/KehadiranSiswa.php?status=success");
+            exit;
+        }
     }
 }
