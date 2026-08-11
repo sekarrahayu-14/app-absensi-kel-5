@@ -1,3 +1,3 @@
 <?php
-header("Location: kehadiran_guru.php");
+header("Location: public/index.php");
 exit;
