@@ -5,4 +5,44 @@
 
     require_once __DIR__ . '/..config/Database.php';
     require_once __DIR__ . '/../controller/SiswaController.php';
+
+    $database = new Database();
+    $connection = $database->getConnection();
+
+    if ($connection === null) {
+        http_response_code(500);
+        echo json_encode([
+            "status" => "error",
+            "message" => "Database telah dapat dihubungi. Periksa MySQL, nama database, username, dan password."
+        ]);
+        exit;
+    }
+
+    $controller = new SiswaController($connection);
+    $request_method = $_SERVER["REQUEST_METHOD"];
+
+    switch ($request_method) {
+        case 'GET':
+            if (($_GET['action'] ?? '') === 'kelas') {
+                $controller->getKelas();
+            }else{
+                $controller->getSiswa();
+            }
+            break;
+        
+
+        case 'POST':
+                $controller->createSiswa();
+            break;
+
+        case 'DELETE':
+                $id = $_GET['id'] ?? null;
+                $controller->deleteSiswa((int) $id);
+            break;
+
+        default:
+           http_response_code(405);
+           echo json_encode(array("message" => "Metode HTTP tidak diizinkan"));
+            break;
+    }
 ?>
