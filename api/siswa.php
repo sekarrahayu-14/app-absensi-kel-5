@@ -1,4 +1,10 @@
 <?php
+<<<<<<< HEAD
+header("Acces-Control-Allow-Origin: *");
+header("Content-Type: application/json; charset=UTF-8");
+header("Acces-Control-Allow-Methods: GET, POST, DELATE");
+header("Acces-Control-Allow-Headers: Content-Type, Acces-Control-Allow-Headers, Authorization, X-Requested-With");
+=======
     header("Access-Control-Allow-Origin: *");
     header("Content-Type: application/json; charset=UTF-8");
     header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
@@ -46,3 +52,4 @@
             break;
     }
 ?>
+>>>>>>> fd12c658b63028e744c2b818b83a04bef74457e5
