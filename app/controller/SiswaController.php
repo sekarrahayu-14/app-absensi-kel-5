@@ -1,7 +1,7 @@
 
 <?php
 require_once __DIR__ . '/../models/Siswa.php';
-require_once __DIR__ . '/../views/JsonView.php';
+require_once __DIR__ . '/../views/JsonViews.php';
 
 class SiswaController
 {

@@ -4,8 +4,8 @@ header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
-require_once '/../config/Database.php';
-require_once '/../controller/KehadiranController.php';
+require_once __DIR__ . '/../config/Database.php';
+require_once __DIR__ . '/../app/controller/KehadiranController.php';
 
 $controller = new KehadiranController();
 $request_method = $_SERVER["REQUEST_METHOD"];
