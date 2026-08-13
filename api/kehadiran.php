@@ -7,7 +7,7 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 require_once '/../config/Database.php';
 require_once '/../controller/KehadiranController.php';
 
-$controller = new KehadiranController();
+$controller = new KehadiranController()
 $request_method = $_SERVER["REQUEST_METHOD"];
 $tanggal = $_POST['tanggal'] ?? date ('Y-m-d');
 
