@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../config/Auth.php';
+require_once __DIR__ . '/../../config/Auth.php';
 
 if (isLoggedIn()) {
     header('Location: index.php');

@@ -61,8 +61,8 @@ requireLogin();
 </div>
 
 <script>
-const API_SISWA = '../api/siswa.php';
-const API_KEHADIRAN = '../api/kehadiran.php';
+const API_SISWA = '../../api/siswa.php';
+const API_KEHADIRAN = '../../api/kehadiran.php';
 
 const statusColor = {
     'Hadir': 'bg-blue-100 text-blue-700',

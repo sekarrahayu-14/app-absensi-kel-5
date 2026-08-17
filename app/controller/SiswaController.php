@@ -52,7 +52,7 @@ class SiswaController
             $success = $this->siswaModel->create($input['nis'], $input['nama'], $input['kelas'], $statusKehadiran);
 
             if ($success) {
-                JsonView::render(201, [
+                JsonView::render(200, [
                     "status" => "success",
                     "message" => "Siswa berhasil ditambahkan"
                 ]);

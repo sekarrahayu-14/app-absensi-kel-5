@@ -1,5 +1,11 @@
 <?php
-require_once __DIR__ . '/../controller/KehadiranController.php';
-
-$controller = new PresensiController();
-$controller->getJsonData();
+class JsonView
+{
+    public static function render($statusCode, $data): void
+    {
+        http_response_code($statusCode);
+        header('Content-Type: application/json; charset=UTF-8');
+        echo json_encode($data);
+        exit;
+    }
+}

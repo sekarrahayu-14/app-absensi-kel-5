@@ -108,7 +108,7 @@ requireLogin();
 
             try {
                 // Kirim request ke Endpoint API Siswa
-                const response = await fetch('../api/siswa.php', {
+                const response = await fetch('../../api/siswa.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -120,7 +120,8 @@ requireLogin();
 
                 alertBox.classList.remove('hidden', 'bg-emerald-50', 'text-emerald-700', 'bg-rose-50', 'text-rose-700');
 
-                if (response.ok && result.status) {
+                // Cek apakah response berhasil (status 200-299) dan status field adalah 'success'
+                if ((response.status === 200 || response.status === 201) && result.status === 'success') {
                     // Sukses
                     alertBox.classList.add('bg-emerald-50', 'text-emerald-700');
                     alertBox.innerHTML = `<i class="fa-solid fa-circle-check mr-2"></i> ${result.message}`;
